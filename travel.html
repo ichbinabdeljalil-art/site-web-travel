@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرواق للسفر - وكالة أسفاركم الموثوقة</title>
+    
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E3A8A', /* أزرق داكن */
+                        secondary: '#3B82F6', /* أزرق فاتح */
+                        gold: '#D4AF37', /* ذهبي */
+                        goldDark: '#B8860B', /* ذهبي غامق */
+                        light: '#F9FAFB', /* أبيض رمادي */
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Animations */
+        body { font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        
+        /* Loading Screen */
+        #loader {
+            position: fixed; inset: 0; background: #fff; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #D4AF37;
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Hide sections by default for SPA approach */
+        .page-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Card Hover Effects */
+        .hover-card { transition: all 0.3s ease; }
+        .hover-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); border-color: #D4AF37; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #B8860B; }
+    </style>
+</head>
+<body class="bg-light text-gray-800">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="spinner mb-4"></div>
+        <h2 class="text-2xl font-bold text-primary">الرواق للسفر</h2>
+        <p class="text-gray-500">جاري التحميل...</p>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="bg-white shadow-md fixed w-full top-0 z-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigate('home')">
+                    <i class="fas fa-kaaba text-gold text-4xl ml-2"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold text-primary leading-tight">الرواق</h1>
+                        <span class="text-sm text-gold tracking-wider">للسفر والسياحة</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden md:flex space-x-8 space-x-reverse">
+                    <button onclick="navigate('home')" class="nav-link text-gray-700 hover:text-gold font-semibold transition">الرئيسية</button>
+                    <button onclick="navigate('programs')" class="nav-link text-gray-700 hover:text-gold font-semibold transition">برامجنا</button>
+                    <button onclick="navigate('videos')" class="nav-link text-gray-700 hover:text-gold font-semibold transition">فيديوات</button>
+                    <button onclick="navigate('branches')" class="nav-link text-gray-700 hover:text-gold font-semibold transition">فروعنا</button>
+                    <button onclick="navigate('contact')" class="nav-link bg-primary text-white px-5 py-2 rounded-full hover:bg-gold hover:text-primary transition shadow-md">تواصل معنا</button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-primary hover:text-gold focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="navigate('home')" class="block w-full text-right px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">الرئيسية</button>
+                <button onclick="navigate('programs')" class="block w-full text-right px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">برامجنا</button>
+                <button onclick="navigate('videos')" class="block w-full text-right px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">فيديوات</button>
+                <button onclick="navigate('branches')" class="block w-full text-right px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50">فروعنا</button>
+                <button onclick="navigate('contact')" class="block w-full text-right px-3 py-2 rounded-md text-base font-medium text-primary font-bold hover:bg-gray-50">تواصل معنا</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pt-20 min-h-screen">
+
+        <!-- ================= PAGE: HOME ================= -->
+        <section id="home" class="page-section active">
+            <!-- Hero Section -->
+            <div class="relative bg-primary">
+                <div class="absolute inset-0">
+                    <img class="w-full h-full object-cover opacity-30" src="https://images.unsplash.com/photo-1565552645632-d725e8bfc16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="سفر وحج">
+                </div>
+                <div class="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+                    <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl mb-6">
+                        رحلتك القادمة تبدأ من <span class="text-gold">الرواق</span>
+                    </h1>
+                    <p class="mt-6 text-xl text-gray-200 max-w-3xl">
+                        نقدم لكم أفضل العروض لرحلات الحج والعمرة والسياحة العالمية. نضمن لكم راحة البال، السكن المريح، والتنقل الآمن لتعيشوا تجربة روحانية وسياحية لا تُنسى.
+                    </p>
+                    <div class="mt-10 flex gap-4 justify-center">
+                        <button onclick="navigate('programs')" class="bg-gold text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-white hover:text-gold transition duration-300 shadow-lg">اكتشف برامجنا</button>
+                        <button onclick="navigate('contact')" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-white hover:text-primary transition duration-300">تواصل معنا</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="py-16 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        <div class="p-6">
+                            <div class="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center text-white mb-4">
+                                <i class="fas fa-plane-departure text-2xl text-gold"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">رحلات منظمة</h3>
+                            <p class="text-gray-600">برامج مدروسة وعناية فائقة بتفاصيل رحلتك من المغادرة حتى العودة.</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center text-white mb-4">
+                                <i class="fas fa-hotel text-2xl text-gold"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">إقامة مميزة</h3>
+                            <p class="text-gray-600">تعاقد مع أفضل الفنادق لضمان راحتكم بالقرب من الحرمين أو في وجهاتكم السياحية.</p>
+                        </div>
+                        <div class="p-6">
+                            <div class="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center text-white mb-4">
+                                <i class="fas fa-headset text-2xl text-gold"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary mb-2">دعم متواصل</h3>
+                            <p class="text-gray-600">فريقنا متواجد على مدار الساعة للرد على استفساراتكم وتلبية احتياجاتكم.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE: PROGRAMS ================= -->
+        <section id="programs" class="page-section">
+            <div class="py-12 bg-light">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-extrabold text-primary sm:text-4xl">برامجنا السنوية</h2>
+                        <p class="mt-4 text-xl text-gray-500">اختر الشهر المناسب لرحلتك واحجز مكانك معنا</p>
+                    </div>
+
+                    <!-- Months Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6" id="months-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Modal -->
+            <div id="booking-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black bg-opacity-50 backdrop-blur-sm p-4">
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-auto animate-[fadeIn_0.3s_ease-out] my-8">
+                    <!-- Modal Header -->
+                    <div class="flex justify-between items-center bg-primary text-white p-5 rounded-t-2xl">
+                        <h3 class="text-2xl font-bold font-arabic">طلب حجز: <span id="modal-month-name" class="text-gold"></span></h3>
+                        <button onclick="closeModal()" class="text-white hover:text-gold transition text-xl">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body (Form) -->
+                    <div class="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                        <form id="booking-form" class="space-y-5">
+                            <input type="hidden" id="selected-month" name="month">
+
+                            <!-- Trip Type -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">نوع الرحلة <span class="text-red-500">*</span></label>
+                                <div class="flex space-x-4 space-x-reverse">
+                                    <label class="flex items-center cursor-pointer p-3 border rounded-lg hover:bg-gray-50 flex-1">
+                                        <input type="radio" name="trip_type" value="فردي" class="text-primary focus:ring-primary h-4 w-4" required checked>
+                                        <span class="mr-2 font-semibold">فردي</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer p-3 border rounded-lg hover:bg-gray-50 flex-1">
+                                        <input type="radio" name="trip_type" value="عائلي" class="text-primary focus:ring-primary h-4 w-4">
+                                        <span class="mr-2 font-semibold">عائلي</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <!-- Name -->
+                                <div>
+                                    <label for="full_name" class="block text-sm font-bold text-gray-700 mb-1">الإسم الكامل <span class="text-red-500">*</span></label>
+                                    <input type="text" id="full_name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                                </div>
+                                <!-- Phone -->
+                                <div>
+                                    <label for="phone" class="block text-sm font-bold text-gray-700 mb-1">رقم الهاتف <span class="text-red-500">*</span></label>
+                                    <input type="tel" id="phone" required dir="ltr" placeholder="+212 6XX XX XX XX" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-right">
+                                </div>
+                                <!-- City -->
+                                <div>
+                                    <label for="city" class="block text-sm font-bold text-gray-700 mb-1">المدينة <span class="text-red-500">*</span></label>
+                                    <input type="text" id="city" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+                                </div>
+                                <!-- Room Type -->
+                                <div>
+                                    <label for="room_type" class="block text-sm font-bold text-gray-700 mb-1">نوع التسكين <span class="text-red-500">*</span></label>
+                                    <select id="room_type" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition appearance-none bg-white">
+                                        <option value="" disabled selected>اختر نوع التسكين...</option>
+                                        <option value="ثنائي">ثنائي (شخصين)</option>
+                                        <option value="ثلاثي">ثلاثي (3 أشخاص)</option>
+                                        <option value="رباعي">رباعي (4 أشخاص)</option>
+                                        <option value="خماسي">خماسي (5 أشخاص)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Hotel Stars -->
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">تصنيف الفندق المفضل <span class="text-red-500">*</span></label>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    <label class="flex flex-col items-center justify-center cursor-pointer p-2 border rounded-lg hover:bg-gold hover:text-white transition group">
+                                        <input type="radio" name="hotel_stars" value="2 نجوم" required class="sr-only">
+                                        <span class="text-gold group-hover:text-white mb-1"><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+                                        <span class="text-xs font-semibold">اقتصادي</span>
+                                    </label>
+                                    <label class="flex flex-col items-center justify-center cursor-pointer p-2 border rounded-lg hover:bg-gold hover:text-white transition group">
+                                        <input type="radio" name="hotel_stars" value="3 نجوم" class="sr-only">
+                                        <span class="text-gold group-hover:text-white mb-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+                                        <span class="text-xs font-semibold">متوسط</span>
+                                    </label>
+                                    <label class="flex flex-col items-center justify-center cursor-pointer p-2 border rounded-lg hover:bg-gold hover:text-white transition group bg-gray-50 border-gold">
+                                        <input type="radio" name="hotel_stars" value="4 نجوم" class="sr-only" checked>
+                                        <span class="text-gold group-hover:text-white mb-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+                                        <span class="text-xs font-semibold">ممتاز</span>
+                                    </label>
+                                    <label class="flex flex-col items-center justify-center cursor-pointer p-2 border rounded-lg hover:bg-gold hover:text-white transition group">
+                                        <input type="radio" name="hotel_stars" value="5 نجوم" class="sr-only">
+                                        <span class="text-gold group-hover:text-white mb-1"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></span>
+                                        <span class="text-xs font-semibold">فاخر</span>
+                                    </label>
+                                </div>
+                                <!-- Visual indicator for selected radio -->
+                                <style>
+                                    input[type="radio"]:checked + span + span { font-weight: 800; }
+                                    input[type="radio"]:checked ~ span { color: #fff; }
+                                    label:has(input[type="radio"]:checked) { background-color: #D4AF37; color: white; border-color: #D4AF37;}
+                                </style>
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <label for="notes" class="block text-sm font-bold text-gray-700 mb-1">ملاحظات إضافية (اختياري)</label>
+                                <textarea id="notes" rows="3" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="pt-4">
+                                <button type="submit" id="submit-btn" class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-gold transition duration-300 flex justify-center items-center">
+                                    <span>إرسال الطلب</span>
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Message Modal (Instead of Alert) -->
+            <div id="message-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+                <div class="bg-white rounded-xl p-8 max-w-sm text-center shadow-2xl transform scale-95 transition-transform duration-300" id="message-content">
+                    <div id="msg-icon" class="text-5xl mb-4"></div>
+                    <h3 id="msg-title" class="text-2xl font-bold mb-2"></h3>
+                    <p id="msg-text" class="text-gray-600 mb-6"></p>
+                    <button onclick="document.getElementById('message-modal').classList.add('hidden')" class="bg-primary text-white px-6 py-2 rounded-lg font-bold hover:bg-gold transition">حسناً</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE: VIDEOS ================= -->
+        <section id="videos" class="page-section">
+            <div class="py-12 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-10">
+                        <h2 class="text-3xl font-extrabold text-primary sm:text-4xl">مكتبة الفيديوهات</h2>
+                        <p class="mt-4 text-xl text-gray-500">شاهد أجمل اللحظات وتعرف على خدماتنا</p>
+                    </div>
+
+                    <!-- Video Tabs -->
+                    <div class="flex justify-center mb-8 border-b border-gray-200">
+                        <button onclick="switchVideoTab('ads')" id="tab-ads" class="video-tab active-tab px-6 py-3 font-bold text-primary border-b-2 border-primary">إعلانات</button>
+                        <button onclick="switchVideoTab('trips')" id="tab-trips" class="video-tab px-6 py-3 font-bold text-gray-500 hover:text-primary transition">رحلات سابقة</button>
+                        <button onclick="switchVideoTab('reviews')" id="tab-reviews" class="video-tab px-6 py-3 font-bold text-gray-500 hover:text-primary transition">ارتسامات الزبناء</button>
+                    </div>
+
+                    <!-- Video Containers -->
+                    <div id="vid-ads" class="video-content grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Placeholder Iframes for Ads -->
+                        <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md aspect-video relative group">
+                            <div class="absolute inset-0 flex items-center justify-center bg-gray-800 text-white">
+                                <i class="fab fa-youtube text-4xl text-red-500"></i> <span class="mr-2">فيديو إعلاني 1</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md aspect-video relative group">
+                             <div class="absolute inset-0 flex items-center justify-center bg-gray-800 text-white">
+                                <i class="fab fa-youtube text-4xl text-red-500"></i> <span class="mr-2">فيديو إعلاني 2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="vid-trips" class="video-content hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md aspect-video relative group">
+                             <div class="absolute inset-0 flex items-center justify-center bg-gray-800 text-white">
+                                <i class="fab fa-youtube text-4xl text-red-500"></i> <span class="mr-2">رحلة مكة المكرمة</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="vid-reviews" class="video-content hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                         <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md aspect-video relative group">
+                             <div class="absolute inset-0 flex items-center justify-center bg-gray-800 text-white">
+                                <i class="fab fa-youtube text-4xl text-red-500"></i> <span class="mr-2">رأي الحاج محمد</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE: BRANCHES ================= -->
+        <section id="branches" class="page-section">
+            <div class="py-12 bg-light">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-extrabold text-primary sm:text-4xl">فروعنا</h2>
+                        <p class="mt-4 text-xl text-gray-500">نحن أقرب إليك أينما كنت</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="branches-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE: CONTACT ================= -->
+        <section id="contact" class="page-section">
+            <div class="py-16 bg-white relative overflow-hidden">
+                <!-- Background decoration -->
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-primary opacity-5 blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-gold opacity-10 blur-3xl"></div>
+                
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                    <i class="fab fa-whatsapp text-6xl text-green-500 mb-6 drop-shadow-lg"></i>
+                    <h2 class="text-4xl font-extrabold text-primary mb-4">تواصل معنا مباشرة</h2>
+                    <p class="text-xl text-gray-600 mb-10">
+                        فريقنا متاح للإجابة على جميع استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب لكم.
+                    </p>
+                    
+                    <a href="https://wa.me/212662231352" target="_blank" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-xl font-bold rounded-full text-white bg-green-500 hover:bg-green-600 shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl ml-3"></i>
+                        راسلنا على واتساب
+                    </a>
+
+                    <div class="mt-12 flex flex-col sm:flex-row justify-center items-center gap-6 text-gray-700">
+                        <div class="flex items-center">
+                            <i class="fas fa-phone text-gold text-xl ml-2"></i>
+                            <span class="text-lg font-semibold dir-ltr">+212 662 231 352</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-gold text-xl ml-2"></i>
+                            <span class="text-lg font-semibold">contact@alriwaq.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white mt-auto">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between text-center md:text-right">
+                <div class="flex justify-center md:justify-start items-center mb-4 md:mb-0">
+                    <i class="fas fa-kaaba text-gold text-2xl ml-2"></i>
+                    <span class="text-xl font-bold">الرواق للسفر</span>
+                </div>
+                <div class="flex justify-center space-x-6 space-x-reverse mb-4 md:mb-0">
+                    <a href="#" class="text-gray-300 hover:text-gold transition text-xl"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-300 hover:text-gold transition text-xl"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-300 hover:text-gold transition text-xl"><i class="fab fa-twitter"></i></a>
+                </div>
+                <p class="text-gray-300 text-sm">
+                    &copy; 2024 جميع الحقوق محفوظة لوكالة الرواق للسفر.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // ================== 1. INITIALIZATION ==================
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }, 800); // Small delay to ensure smooth rendering
+
+            renderMonths();
+            renderBranches();
+        });
+
+        // ================== 2. NAVIGATION (SPA) ==================
+        function navigate(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // ================== 3. PROGRAMS (Months) ==================
+        const months = [
+            'يناير', 'فبراير', 'مارس', 'أبريل', 'ماي', 'يونيو', 
+            'يوليوز', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'
+        ];
+
+        function renderMonths() {
+            const container = document.getElementById('months-container');
+            months.forEach((month, index) => {
+                // Determine icon based on season/month approx
+                let icon = 'fa-plane';
+                if(month === 'مارس' || month === 'أبريل') icon = 'fa-kaaba'; // Ramadan/Umrah season mock
+                if(month === 'يوليوز' || month === 'غشت') icon = 'fa-umbrella-beach'; // Summer
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center cursor-pointer hover-card';
+                card.onclick = () => openBookingModal(month);
+                card.innerHTML = `
+                    <div class="w-14 h-14 mx-auto bg-blue-50 text-primary rounded-full flex items-center justify-center mb-4 border border-blue-100">
+                        <i class="fas ${icon} text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-1">${month}</h3>
+                    <p class="text-sm text-gold font-semibold">اضغط للحجز</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ================== 4. MODAL LOGIC ==================
+        function openBookingModal(month) {
+            document.getElementById('modal-month-name').innerText = month;
+            document.getElementById('selected-month').value = month;
+            document.getElementById('booking-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal() {
+            document.getElementById('booking-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.getElementById('booking-form').reset();
+        }
+
+        // ================== 5. VIDEOS TABS ==================
+        function switchVideoTab(tabName) {
+            // Reset buttons
+            document.querySelectorAll('.video-tab').forEach(btn => {
+                btn.classList.remove('active-tab', 'text-primary', 'border-b-2', 'border-primary');
+                btn.classList.add('text-gray-500');
+            });
+            // Set active button
+            const activeBtn = document.getElementById(`tab-${tabName}`);
+            activeBtn.classList.remove('text-gray-500');
+            activeBtn.classList.add('active-tab', 'text-primary', 'border-b-2', 'border-primary');
+
+            // Hide all content
+            document.querySelectorAll('.video-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Show target content
+            document.getElementById(`vid-${tabName}`).classList.remove('hidden');
+        }
+
+        // ================== 6. BRANCHES ==================
+        const branches = [
+            { city: 'الدار البيضاء', address: 'شارع الزرقطوني، عمارة 15، الطابق 2', phone: '0522XXXXXX' },
+            { city: 'الرباط', address: 'حي أكدال، شارع فرنسا، رقم 44', phone: '0537XXXXXX' },
+            { city: 'مراكش', address: 'جليز، شارع محمد الخامس، إقامة النخيل', phone: '0524XXXXXX' },
+            { city: 'طنجة', address: 'محج محمد السادس، مجمع البوغاز', phone: '0539XXXXXX' }
+        ];
+
+        function renderBranches() {
+            const container = document.getElementById('branches-container');
+            branches.forEach(branch => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover-card';
+                card.innerHTML = `
+                    <div class="h-2 bg-primary"></div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-primary mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt text-gold ml-2"></i> ${branch.city}
+                        </h3>
+                        <p class="text-gray-600 mb-3 flex items-start">
+                            <i class="fas fa-building mt-1 ml-2 text-gray-400"></i>
+                            <span>${branch.address}</span>
+                        </p>
+                        <p class="text-gray-600 font-semibold flex items-center" dir="ltr">
+                            <i class="fas fa-phone-alt text-green-500 mr-2"></i>
+                            <span>${branch.phone}</span>
+                        </p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ================== 7. TELEGRAM BOT INTEGRATION ==================
+        /* ⚠️ هام جداً: إعداد Telegram Bot
+           1. اذهب إلى تطبيق تيليجرام وابحث عن @BotFather
+           2. أرسل /newbot واتبع الخطوات للحصول على التوكن (BOT_TOKEN)
+           3. ابدأ محادثة مع البوت الخاص بك
+           4. احصل على Chat ID الخاص بك عبر زيارة الرابط: 
+              https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates
+           5. ضع القيم أدناه (حالياً استخدمت قيم فارغة يجب تعبئتها)
+        */
+        
+        const BOT_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN_HERE'; 
+        const CHAT_ID = 'YOUR_CHAT_ID_HERE';
+
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent page reload
+            
+            const btn = document.getElementById('submit-btn');
+            const originalBtnHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+            btn.disabled = true;
+
+            // Gather Form Data
+            const formData = {
+                month: document.getElementById('selected-month').value,
+                tripType: document.querySelector('input[name="trip_type"]:checked').value,
+                name: document.getElementById('full_name').value,
+                phone: document.getElementById('phone').value,
+                city: document.getElementById('city').value,
+                roomType: document.getElementById('room_type').value,
+                stars: document.querySelector('input[name="hotel_stars"]:checked').value,
+                notes: document.getElementById('notes').value || 'لا توجد'
+            };
+
+            // Format message for Telegram
+            const message = `
+🛎️ **طلب حجز جديد - الرواق للسفر**
+---------------------------
+📅 **الشهر:** ${formData.month}
+🏷️ **نوع الرحلة:** ${formData.tripType}
+👤 **الإسم:** ${formData.name}
+📱 **الهاتف:** ${formData.phone}
+📍 **المدينة:** ${formData.city}
+🛏️ **التسكين:** ${formData.roomType}
+⭐ **الفندق:** ${formData.stars}
+📝 **ملاحظات:** ${formData.notes}
+            `;
+
+            // If Tokens are not set, show success anyway (for demo purposes)
+            if(BOT_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN_HERE') {
+                setTimeout(() => {
+                    console.log("Mock Telegram Send:\n", message);
+                    showCustomMessage('success', 'نجاح', 'تم استلام طلبك بنجاح! (وضع المحاكاة يعمل - يجب وضع توكن تيليجرام الحقيقي في الكود). سنتواصل معك قريباً.');
+                    closeModal();
+                    btn.innerHTML = originalBtnHtml;
+                    btn.disabled = false;
+                }, 1000);
+                return;
+            }
+
+            // Real Fetch API call to Telegram
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.ok) {
+                    showCustomMessage('success', 'شكراً لك!', 'تم إرسال طلبك بنجاح. سيتواصل معك فريقنا في أقرب وقت عبر الواتساب أو الهاتف.');
+                    closeModal();
+                } else {
+                    showCustomMessage('error', 'عذراً', 'حدث خطأ أثناء الإرسال. المرجو المحاولة لاحقاً أو التواصل معنا عبر الواتساب.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showCustomMessage('error', 'خطأ في الاتصال', 'يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.');
+            })
+            .finally(() => {
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+            });
+        });
+
+        // Custom Alert function
+        function showCustomMessage(type, title, text) {
+            const modal = document.getElementById('message-modal');
+            const icon = document.getElementById('msg-icon');
+            const modalContent = document.getElementById('message-content');
+            
+            document.getElementById('msg-title').innerText = title;
+            document.getElementById('msg-text').innerText = text;
+
+            if(type === 'success') {
+                icon.innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+            } else {
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle text-red-500"></i>';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+    </script>
+</body>
+</html>
